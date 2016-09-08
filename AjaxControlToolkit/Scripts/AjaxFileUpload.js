@@ -291,7 +291,7 @@ Sys.Extended.UI.AjaxFileUpload.Processor = function(control, elements) {
     },
 
     this.onFileSelectedHandler = function(e) {
-        // User selects file through browser open file dialog. 
+        // User selects file through browser open file dialog.
         // We generate file item and add it into file list, and recreate new element for next file.
 
         // generate file item to be uploaded
@@ -381,9 +381,11 @@ Sys.Extended.UI.AjaxFileUpload.Processor = function(control, elements) {
 
         // only add 1 file input element to be uploaded
         form.appendChild(inputElement);
+        var sk = document.getElementById('SessionKey');
         form.setAttribute("action", control.get_uploadHandlerPath()
             + '?contextKey=' + control.get_contextKey()
             + '&controlID=' + control.get_id()
+            + (sk == null ? '': '&sessionKey=' + sk.value)
             + '&fileId=' + control._currentFileId
             + '&fileName=' + fileItem._fileName
             + '&usePoll=' + (control.get_serverPollingSupport() ? "true" : "false"));
@@ -413,7 +415,7 @@ Sys.Extended.UI.AjaxFileUpload.Processor = function(control, elements) {
                 if(xhr.status == 200) {
                     control.cancelUpload();
                 } else {
-                    // cancelation is error. 
+                    // cancelation is error.
                     self.raiseUploadError(xhr);
                     throw "Failed to cancel upload.";
                 }
@@ -579,7 +581,7 @@ Sys.Extended.UI.AjaxFileUpload.ProcessorHtml5 = function(control, elements) {
 
     };
 
-    // #region event handlers 
+    // #region event handlers
 
     this.onFileDroppedHandler = function(e) {
         e.stopPropagation();
@@ -692,7 +694,7 @@ Sys.Extended.UI.AjaxFileUpload.ProcessorHtml5 = function(control, elements) {
 
     this.cancelUpload = function() {
 
-        // abort ajax upload request 
+        // abort ajax upload request
         if(xhrReq) xhrReq.abort();
 
         control.cancelUpload();
@@ -785,7 +787,7 @@ Sys.Extended.UI.AjaxFileUpload.ProcessorHtml5 = function(control, elements) {
             var fileItem = control.getFileItem(id),
                 slices = fileItem._slices,
 
-                // calculate all uploaded bytes 
+                // calculate all uploaded bytes
                 allBytesUploaded = fileItem._bytesUploaded + tmpXhrLoaded,
 
                 // estimation of total file size
@@ -949,8 +951,8 @@ Sys.Extended.UI.AjaxFileUpload.Control = function(element) {
 
     Sys.Extended.UI.AjaxFileUpload.Control.initializeBase(this, [element]);
 
-    // properties 
-    this._contextKey = null;
+    // properties
+    this._contextKey = '{DA8BEDC8-B952-4d5d-8CC2-59FE922E2923}';
 
     /// <summary>
     /// A url of the page where the control is located.
@@ -994,7 +996,7 @@ Sys.Extended.UI.AjaxFileUpload.Control = function(element) {
     this._throbber = null;
 
     /// <summary>
-    /// A maximum number of files in an upload queue. 
+    /// A maximum number of files in an upload queue.
     /// Default value is 10.
     /// </summary>
     /// <getter>get_maximumNumberOfFiles</getter>
@@ -1030,7 +1032,7 @@ Sys.Extended.UI.AjaxFileUpload.Control = function(element) {
 
     /// <summary>
     /// The maximum size of a file to be uploaded in Kbytes.
-    /// A non-positive value means the size is unlimited. 
+    /// A non-positive value means the size is unlimited.
     /// </summary>
     /// <getter>get_maxFileSize</getter>
     /// <setter>set_maxFileSize</setter>
@@ -1083,7 +1085,7 @@ Sys.Extended.UI.AjaxFileUpload.Control.prototype = {
                 footer: getElement('_Footer')
             };
 
-        // determine browser supports for HTML5, only if browser supported and mode is not Server.           
+        // determine browser supports for HTML5, only if browser supported and mode is not Server.
         this._useHtml5Support = utils.checkHtml5BrowserSupport() && this._mode != 2;
 
         // define progress bar element
@@ -1411,7 +1413,7 @@ Sys.Extended.UI.AjaxFileUpload.Control.prototype = {
     },
 
     /// <summary>
-    /// Checks if the file size is larger than the upload size limit. 
+    /// Checks if the file size is larger than the upload size limit.
     /// </summary>
     /// <member name="cM:AjaxControlToolkit.AjaxFileUpload.fileSizeExceeded" />
     /// <param name="fileSize" type="Number">File size in bytes</param>
@@ -1456,11 +1458,12 @@ Sys.Extended.UI.AjaxFileUpload.Control.prototype = {
         // send message to server to finalize this upload
         var xhr = new XMLHttpRequest(),
             self = this;
-
+        var sk = document.getElementById('SessionKey');
         xhr.open("POST",
             '?contextKey=' + this.get_contextKey()
             + '&controlID=' + this.get_id()
-            + '&done=1&guid=' + fileItem._id
+            + (sk == null ? '' : '&sessionKey=' + sk.value)
+            + '&done=1&guid=' +fileItem._id
             + this.getQueryString(), true);
 
         xhr.onreadystatechange = function(e) {
@@ -1734,7 +1737,7 @@ Sys.Extended.UI.AjaxFileUpload.Control.prototype = {
     },
 
     /// <summary>
-    /// An event handler that will be raised when the UploadComplete event is raised 
+    /// An event handler that will be raised when the UploadComplete event is raised
     /// in all files in an upload queue, or when a user presses the Cancel button to stop uploading.
     /// </summary>
     /// <member name="cE:AjaxControlToolkit.AjaxFileUpload.uploadCompleteAll" />

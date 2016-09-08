@@ -614,8 +614,10 @@ Sys.Extended.UI.AccordionBehavior.prototype = {
 
         var opened = (index === this._selectedIndex);
         wrapper.style.height = (opened || (this._autoSize === Sys.Extended.UI.AutoSize.Fill)) ? 'auto' : '0px';
-        wrapper.style.overflow = opened ? 'auto' : 'hidden';
+        wrapper.style.overflowY = opened ? 'auto' : 'hidden';
+        wrapper.style.overflowX = 'hidden';
         wrapper.style.display = opened ? 'block' : 'none';
+        wrapper.style.width = '100%';
         original.style.height = 'auto';
         original.style.maxHeight = '';
         original.style.overflow = opened ? 'auto' : 'hidden';
